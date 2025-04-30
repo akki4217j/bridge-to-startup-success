@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { businesses, countries, industries } from "@/data/mockData";
 import BusinessCard from "@/components/BusinessCard";
@@ -9,16 +8,16 @@ import { Search } from "lucide-react";
 
 const Buy = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedIndustry, setSelectedIndustry] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedIndustry, setSelectedIndustry] = useState("all-industries");
+  const [selectedCountry, setSelectedCountry] = useState("all-countries");
 
   // Filter businesses based on search term and filters
   const filteredBusinesses = businesses.filter((business) => {
     const matchesSearch = business.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          business.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesIndustry = selectedIndustry === "" || business.industry === selectedIndustry;
-    const matchesCountry = selectedCountry === "" || business.country === selectedCountry;
+    const matchesIndustry = selectedIndustry === "all-industries" || business.industry === selectedIndustry;
+    const matchesCountry = selectedCountry === "all-countries" || business.country === selectedCountry;
     
     return matchesSearch && matchesIndustry && matchesCountry;
   });
@@ -61,7 +60,7 @@ const Buy = () => {
                   <SelectValue placeholder="All Industries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Industries</SelectItem>
+                  <SelectItem value="all-industries">All Industries</SelectItem>
                   {industries.map((industry) => (
                     <SelectItem key={industry} value={industry}>
                       {industry}
@@ -79,7 +78,7 @@ const Buy = () => {
                   <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Countries</SelectItem>
+                  <SelectItem value="all-countries">All Countries</SelectItem>
                   {countries.map((country) => (
                     <SelectItem key={country} value={country}>
                       {country}

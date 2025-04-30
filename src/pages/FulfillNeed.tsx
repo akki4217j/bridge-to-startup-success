@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { businessNeeds, needTypes, countries } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
@@ -16,8 +15,8 @@ const FulfillNeed = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("browse");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedType, setSelectedType] = useState("all-types");
+  const [selectedCountry, setSelectedCountry] = useState("all-countries");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form data for registering a need
@@ -35,8 +34,8 @@ const FulfillNeed = () => {
     const matchesSearch = need.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          need.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesType = selectedType === "" || need.type === selectedType;
-    const matchesCountry = selectedCountry === "" || need.country === selectedCountry;
+    const matchesType = selectedType === "all-types" || need.type === selectedType;
+    const matchesCountry = selectedCountry === "all-countries" || need.country === selectedCountry;
     
     return matchesSearch && matchesType && matchesCountry;
   });
@@ -123,7 +122,7 @@ const FulfillNeed = () => {
                       <SelectValue placeholder="All Types" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
+                      <SelectItem value="all-types">All Types</SelectItem>
                       {needTypes.map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
@@ -141,7 +140,7 @@ const FulfillNeed = () => {
                       <SelectValue placeholder="All Countries" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Countries</SelectItem>
+                      <SelectItem value="all-countries">All Countries</SelectItem>
                       {countries.map((country) => (
                         <SelectItem key={country} value={country}>
                           {country}

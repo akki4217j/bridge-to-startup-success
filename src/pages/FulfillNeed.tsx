@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import ContactForm from "@/components/ContactForm";
-import { Search } from "lucide-react";
+import { Search, Video } from "lucide-react";
 
 const FulfillNeed = () => {
   const { toast } = useToast();
@@ -18,6 +18,7 @@ const FulfillNeed = () => {
   const [selectedType, setSelectedType] = useState("all-types");
   const [selectedCountry, setSelectedCountry] = useState("all-countries");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
 
   // Form data for registering a need
   const [formData, setFormData] = useState({
@@ -27,6 +28,7 @@ const FulfillNeed = () => {
     businessName: "",
     country: "",
     contactEmail: "",
+    pitchVideoUrl: "",
   });
 
   // Filter needs based on search and filters
@@ -49,6 +51,26 @@ const FulfillNeed = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check if it's a video file
+      if (file.type.startsWith('video/')) {
+        setUploadedVideo(file);
+        toast({
+          title: "Video Selected",
+          description: `${file.name} has been selected for upload.`,
+        });
+      } else {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select a video file.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -68,7 +90,9 @@ const FulfillNeed = () => {
         businessName: "",
         country: "",
         contactEmail: "",
+        pitchVideoUrl: "",
       });
+      setUploadedVideo(null);
     }, 1500);
   };
 
@@ -332,6 +356,69 @@ const FulfillNeed = () => {
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+
+                  {/* Pitch Video Section */}
+                  <div className="space-y-4">
+                    <Label className="text-base">Pitch Video (Optional)</Label>
+                    <p className="text-sm text-gray-500">
+                      Add a pitch video to showcase your business need. You can either provide a URL or upload a video file.
+                    </p>
+                    
+                    {/* Video URL Option */}
+                    <div>
+                      <Label htmlFor="pitchVideoUrl" className="text-sm text-gray-600">Video URL</Label>
+                      <Input
+                        id="pitchVideoUrl"
+                        name="pitchVideoUrl"
+                        type="url"
+                        value={formData.pitchVideoUrl}
+                        onChange={handleInputChange}
+                        placeholder="https://youtube.com/your-pitch-video"
+                        className="mt-1"
+                      />
+                    </div>
+
+                    {/* Video Upload Option */}
+                    <div>
+                      <Label htmlFor="videoUpload" className="text-sm text-gray-600">Or Upload Video File</Label>
+                      <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
+                        <Video className="text-gray-400 mb-2" size={32} />
+                        {uploadedVideo ? (
+                          <div className="text-center">
+                            <p className="text-sm font-medium text-green-600 mb-2">
+                              ✓ {uploadedVideo.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Size: {(uploadedVideo.size / (1024 * 1024)).toFixed(2)} MB
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-500 mb-2">
+                            Drag and drop your video here, or click to browse
+                          </p>
+                        )}
+                        <input
+                          id="videoUpload"
+                          type="file"
+                          className="hidden"
+                          accept="video/*"
+                          onChange={handleVideoUpload}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="mt-2"
+                          onClick={() => document.getElementById("videoUpload")?.click()}
+                        >
+                          {uploadedVideo ? "Change Video" : "Select Video File"}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Supported formats: MP4, AVI, MOV, WMV. Max size: 100MB
+                      </p>
                     </div>
                   </div>
 

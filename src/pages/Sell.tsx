@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
-import { industries, countries } from "@/data/mockData";
+import { useToast } from "@/hooks/use-toast";
+import { industries, countries, businessTypes } from "@/data/mockData";
 import { Upload, Video } from "lucide-react";
 
 const Sell = () => {
@@ -22,6 +22,7 @@ const Sell = () => {
     revenue: "",
     teamSize: "",
     industry: "",
+    businessType: "",
     websiteUrl: "",
     contactEmail: "",
     pitchVideoUrl: "",
@@ -64,8 +65,8 @@ const Sell = () => {
     setTimeout(() => {
       setIsLoading(false);
       toast({
-        title: "Listing Submitted",
-        description: "Your business has been successfully listed on StartupBridge.",
+        title: "Listing Submitted for Review",
+        description: "Your business has been submitted and is pending admin approval. You'll be notified once it's approved and live on the marketplace.",
       });
       // Reset form
       setFormData({
@@ -76,6 +77,7 @@ const Sell = () => {
         revenue: "",
         teamSize: "",
         industry: "",
+        businessType: "",
         websiteUrl: "",
         contactEmail: "",
         pitchVideoUrl: "",
@@ -94,6 +96,12 @@ const Sell = () => {
             <p className="text-lg text-gray-600">
               List your startup or established business to connect with potential buyers.
             </p>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Note:</strong> All business listings require admin approval before being published on our marketplace. 
+                This ensures quality and helps protect both buyers and sellers.
+              </p>
+            </div>
           </div>
 
           {/* Form Card */}
@@ -180,6 +188,29 @@ const Sell = () => {
                       {industries.map((industry) => (
                         <SelectItem key={industry} value={industry}>
                           {industry}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Business Type */}
+                <div>
+                  <Label htmlFor="businessType" className="text-base">
+                    Business Type <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={formData.businessType}
+                    onValueChange={(value) => handleSelectChange("businessType", value)}
+                    required
+                  >
+                    <SelectTrigger id="businessType" className="mt-1">
+                      <SelectValue placeholder="Select business type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {businessTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -370,8 +401,11 @@ const Sell = () => {
                   className="w-full bg-startupPurple-600 hover:bg-startupPurple-700"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Submitting..." : "List Your Business"}
+                  {isLoading ? "Submitting for Review..." : "Submit for Review"}
                 </Button>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  Your listing will be reviewed by our team and published within 24-48 hours if approved.
+                </p>
               </div>
             </form>
           </div>

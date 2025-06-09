@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { businesses, countries, industries } from "@/data/mockData";
+import { businesses, countries, businessTypes } from "@/data/mockData";
 import BusinessCard from "@/components/BusinessCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,19 +9,21 @@ import { Search } from "lucide-react";
 
 const Buy = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedIndustry, setSelectedIndustry] = useState("all-industries");
+  const [selectedBusinessType, setSelectedBusinessType] = useState("all-types");
   const [selectedCountry, setSelectedCountry] = useState("all-countries");
 
-  // Filter businesses based on search term and filters
-  const filteredBusinesses = businesses.filter((business) => {
-    const matchesSearch = business.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         business.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesIndustry = selectedIndustry === "all-industries" || business.industry === selectedIndustry;
-    const matchesCountry = selectedCountry === "all-countries" || business.country === selectedCountry;
-    
-    return matchesSearch && matchesIndustry && matchesCountry;
-  });
+  // Filter businesses to only show approved ones and apply search/filter criteria
+  const filteredBusinesses = businesses
+    .filter((business) => business.status === "approved") // Only show approved businesses
+    .filter((business) => {
+      const matchesSearch = business.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           business.description.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesBusinessType = selectedBusinessType === "all-types" || business.businessType === selectedBusinessType;
+      const matchesCountry = selectedCountry === "all-countries" || business.country === selectedCountry;
+      
+      return matchesSearch && matchesBusinessType && matchesCountry;
+    });
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -52,18 +55,18 @@ const Buy = () => {
               </div>
             </div>
 
-            {/* Industry Filter */}
+            {/* Business Type Filter */}
             <div>
-              <Label htmlFor="industry" className="mb-2 block">Industry</Label>
-              <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
-                <SelectTrigger id="industry">
-                  <SelectValue placeholder="All Industries" />
+              <Label htmlFor="businessType" className="mb-2 block">Business Type</Label>
+              <Select value={selectedBusinessType} onValueChange={setSelectedBusinessType}>
+                <SelectTrigger id="businessType">
+                  <SelectValue placeholder="All Business Types" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all-industries">All Industries</SelectItem>
-                  {industries.map((industry) => (
-                    <SelectItem key={industry} value={industry}>
-                      {industry}
+                  <SelectItem value="all-types">All Business Types</SelectItem>
+                  {businessTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
                     </SelectItem>
                   ))}
                 </SelectContent>

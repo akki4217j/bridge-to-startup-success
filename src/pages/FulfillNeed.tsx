@@ -1,44 +1,35 @@
+
 import { useState } from "react";
-import { businessNeeds, needTypes, countries } from "@/data/mockData";
+import { businessNeeds, needTypes, countries, businessTypes } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
-import ContactForm from "@/components/ContactForm";
-import { Search, Video } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Search, Calendar, Building, MapPin, Video } from "lucide-react";
 
 const FulfillNeed = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("browse");
+  const [activeTab, setActiveTab] = useState<"browse" | "register">("browse");
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
+  
+  // Browse filters
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all-types");
   const [selectedCountry, setSelectedCountry] = useState("all-countries");
   const [selectedBusinessType, setSelectedBusinessType] = useState("all-business-types");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
-
-  // Business types for filtering and form
-  const businessTypes = [
-    "Startup",
-    "Small Business", 
-    "Medium Enterprise",
-    "Large Corporation",
-    "Non-Profit",
-    "Freelancer",
-    "Agency"
-  ];
-
-  // Form data for registering a need
+  
+  // Register form data
   const [formData, setFormData] = useState({
     title: "",
     type: "",
+    businessType: "",
     description: "",
     businessName: "",
-    businessType: "",
     country: "",
     contactEmail: "",
     pitchVideoUrl: "",
@@ -47,12 +38,12 @@ const FulfillNeed = () => {
   // Filter needs based on search and filters
   const filteredNeeds = businessNeeds.filter((need) => {
     const matchesSearch = need.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         need.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         need.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         need.businessName.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesType = selectedType === "all-types" || need.type === selectedType;
     const matchesCountry = selectedCountry === "all-countries" || need.country === selectedCountry;
-    const matchesBusinessType = selectedBusinessType === "all-business-types" || 
-                               (need as any).businessType === selectedBusinessType;
+    const matchesBusinessType = selectedBusinessType === "all-business-types" || need.businessType === selectedBusinessType;
     
     return matchesSearch && matchesType && matchesCountry && matchesBusinessType;
   });
@@ -69,7 +60,6 @@ const FulfillNeed = () => {
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check if it's a video file
       if (file.type.startsWith('video/')) {
         setUploadedVideo(file);
         toast({
@@ -88,22 +78,22 @@ const FulfillNeed = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsLoading(true);
 
     // Simulate form submission
     setTimeout(() => {
-      setIsSubmitting(false);
+      setIsLoading(false);
       toast({
-        title: "Need Registered",
-        description: "Your business need has been successfully registered.",
+        title: "Need Registered Successfully",
+        description: "Your business need has been posted and will be visible to potential partners.",
       });
       // Reset form
       setFormData({
         title: "",
         type: "",
+        businessType: "",
         description: "",
         businessName: "",
-        businessType: "",
         country: "",
         contactEmail: "",
         pitchVideoUrl: "",
@@ -117,27 +107,41 @@ const FulfillNeed = () => {
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-3">Fulfill a Business Need</h1>
+          <h1 className="text-4xl font-bold mb-3">Business Needs Marketplace</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Browse startups and businesses looking for partnerships, investments, or services.
-            Or register your own business need to connect with potential partners.
+            Browse business needs from startups and companies, or register your own specific requirements.
           </p>
         </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <div className="flex justify-center">
-            <TabsList className="grid grid-cols-2 w-full max-w-md">
-              <TabsTrigger value="browse">Browse Needs</TabsTrigger>
-              <TabsTrigger value="register">Register a Need</TabsTrigger>
-            </TabsList>
+        {/* Tab Navigation */}
+        <div className="bg-white rounded-lg shadow-sm mb-8">
+          <div className="flex border-b">
+            <button
+              className={`px-6 py-4 font-medium ${
+                activeTab === "browse"
+                  ? "border-b-2 border-startupPurple-600 text-startupPurple-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => setActiveTab("browse")}
+            >
+              Browse Needs
+            </button>
+            <button
+              className={`px-6 py-4 font-medium ${
+                activeTab === "register"
+                  ? "border-b-2 border-startupPurple-600 text-startupPurple-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => setActiveTab("register")}
+            >
+              Register a Need
+            </button>
           </div>
 
-          {/* Browse Needs Tab */}
-          <TabsContent value="browse">
-            {/* Filters */}
-            <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          {activeTab === "browse" && (
+            <div className="p-6">
+              {/* Search and Filter */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                 {/* Search */}
                 <div className="relative">
                   <Label htmlFor="search" className="mb-2 block">Search</Label>
@@ -145,7 +149,7 @@ const FulfillNeed = () => {
                     <Input
                       id="search"
                       type="text"
-                      placeholder="Search by title or description"
+                      placeholder="Search needs..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -156,9 +160,9 @@ const FulfillNeed = () => {
 
                 {/* Need Type Filter */}
                 <div>
-                  <Label htmlFor="needType" className="mb-2 block">Need Type</Label>
+                  <Label htmlFor="type" className="mb-2 block">Need Type</Label>
                   <Select value={selectedType} onValueChange={setSelectedType}>
-                    <SelectTrigger id="needType">
+                    <SelectTrigger id="type">
                       <SelectValue placeholder="All Types" />
                     </SelectTrigger>
                     <SelectContent>
@@ -192,9 +196,9 @@ const FulfillNeed = () => {
 
                 {/* Country Filter */}
                 <div>
-                  <Label htmlFor="needCountry" className="mb-2 block">Country</Label>
+                  <Label htmlFor="country" className="mb-2 block">Country</Label>
                   <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                    <SelectTrigger id="needCountry">
+                    <SelectTrigger id="country">
                       <SelectValue placeholder="All Countries" />
                     </SelectTrigger>
                     <SelectContent>
@@ -208,92 +212,70 @@ const FulfillNeed = () => {
                   </Select>
                 </div>
               </div>
-            </div>
 
-            {/* Needs Listing */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">
-                {filteredNeeds.length} Business {filteredNeeds.length === 1 ? "Need" : "Needs"} Available
-              </h2>
+              {/* Results */}
+              <div>
+                <h2 className="text-2xl font-bold mb-6">
+                  {filteredNeeds.length} {filteredNeeds.length === 1 ? "Need" : "Needs"} Available
+                </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {filteredNeeds.map((need) => (
-                  <Card key={need.id} className="card-hover overflow-hidden h-full flex flex-col">
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-startupPurple-100 text-startupPurple-800">
-                          {need.type}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          Posted on {new Date(need.postedDate).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <CardTitle className="text-lg">{need.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                      <p className="text-sm text-gray-700 mb-4">
-                        {need.description}
-                      </p>
-                      <div className="flex items-center justify-between text-sm text-gray-600">
-                        <span>{need.businessName}</span>
-                        <span>{need.country}</span>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t pt-4">
-                      <Button 
-                        className="w-full bg-startupPurple-600 hover:bg-startupPurple-700"
-                        onClick={() => {
-                          document.getElementById(`need-${need.id}`)?.scrollIntoView({ behavior: 'smooth' });
-                          document.getElementById(`need-${need.id}`)?.classList.add('ring-2', 'ring-startupPurple-500');
-                          setTimeout(() => {
-                            document.getElementById(`need-${need.id}`)?.classList.remove('ring-2', 'ring-startupPurple-500');
-                          }, 1500);
-                        }}
-                      >
-                        Contact Business
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-
-              {filteredNeeds.length === 0 && (
-                <div className="text-center py-12">
-                  <h3 className="text-xl font-medium mb-2">No business needs match your search</h3>
-                  <p className="text-gray-500">Try adjusting your search criteria or filters</p>
+                <div className="grid grid-cols-1 gap-6">
+                  {filteredNeeds.map((need) => (
+                    <Card key={need.id} className="hover:shadow-md transition-shadow">
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-xl mb-2">{need.title}</CardTitle>
+                            <CardDescription className="flex items-center gap-4 text-sm">
+                              <span className="flex items-center gap-1">
+                                <Building size={14} />
+                                {need.businessName}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <MapPin size={14} />
+                                {need.country}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Calendar size={14} />
+                                {new Date(need.postedDate).toLocaleDateString()}
+                              </span>
+                            </CardDescription>
+                          </div>
+                          <div className="flex gap-2">
+                            <Badge variant="secondary">{need.type}</Badge>
+                            {need.businessType && (
+                              <Badge variant="outline">{need.businessType}</Badge>
+                            )}
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 mb-4">{need.description}</p>
+                        <Button className="bg-startupPurple-600 hover:bg-startupPurple-700">
+                          Contact & Fulfill Need
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              )}
-            </div>
 
-            {/* Contact Forms */}
-            <div className="mt-16 space-y-8">
-              <h2 className="text-2xl font-bold">Contact Businesses</h2>
-              {filteredNeeds.map((need) => (
-                <div 
-                  key={need.id} 
-                  id={`need-${need.id}`}
-                  className="bg-white p-6 rounded-lg shadow-sm transition-all duration-300"
-                >
-                  <h3 className="text-xl font-bold mb-2">{need.title}</h3>
-                  <div className="mb-6">
-                    <p className="text-sm text-gray-500">
-                      {need.businessName} • {need.country} • {need.type}
-                    </p>
+                {filteredNeeds.length === 0 && (
+                  <div className="text-center py-12">
+                    <h3 className="text-xl font-medium mb-2">No needs match your search</h3>
+                    <p className="text-gray-500">Try adjusting your search criteria or filters</p>
                   </div>
-                  <ContactForm recipientName={need.businessName} recipientType="need" />
-                </div>
-              ))}
+                )}
+              </div>
             </div>
-          </TabsContent>
+          )}
 
-          {/* Register a Need Tab */}
-          <TabsContent value="register">
-            <div className="max-w-2xl mx-auto">
-              <div className="bg-white p-8 rounded-lg shadow-sm">
+          {activeTab === "register" && (
+            <div className="p-6">
+              <div className="max-w-2xl mx-auto">
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold mb-2">Register Your Business Need</h2>
                   <p className="text-gray-600">
-                    Describe what your business is looking for. Be specific to attract the right partners.
+                    Post your specific business requirements to connect with potential partners, investors, or service providers.
                   </p>
                 </div>
 
@@ -308,68 +290,38 @@ const FulfillNeed = () => {
                       name="title"
                       value={formData.title}
                       onChange={handleInputChange}
-                      placeholder="e.g., Looking for Marketing Partner"
+                      placeholder="Brief title describing what you need"
                       className="mt-1"
                       required
                     />
                   </div>
 
-                  {/* Need Type */}
-                  <div>
-                    <Label htmlFor="type" className="text-base">
-                      Need Type <span className="text-red-500">*</span>
-                    </Label>
-                    <Select
-                      value={formData.type}
-                      onValueChange={(value) => handleSelectChange("type", value)}
-                      required
-                    >
-                      <SelectTrigger id="type" className="mt-1">
-                        <SelectValue placeholder="Select need type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {needTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Need Description */}
-                  <div>
-                    <Label htmlFor="description" className="text-base">
-                      Description <span className="text-red-500">*</span>
-                    </Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      placeholder="Describe what you're looking for, requirements, timeline, etc."
-                      className="mt-1 h-32"
-                      required
-                    />
-                  </div>
-
-                  {/* Business Name and Business Type */}
+                  {/* Two Column Layout */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Need Type */}
                     <div>
-                      <Label htmlFor="businessName" className="text-base">
-                        Business Name <span className="text-red-500">*</span>
+                      <Label htmlFor="needType" className="text-base">
+                        Need Type <span className="text-red-500">*</span>
                       </Label>
-                      <Input
-                        id="businessName"
-                        name="businessName"
-                        value={formData.businessName}
-                        onChange={handleInputChange}
-                        placeholder="Your business name"
-                        className="mt-1"
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => handleSelectChange("type", value)}
                         required
-                      />
+                      >
+                        <SelectTrigger id="needType" className="mt-1">
+                          <SelectValue placeholder="Select need type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {needTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
+                    {/* Business Type */}
                     <div>
                       <Label htmlFor="businessType" className="text-base">
                         Business Type <span className="text-red-500">*</span>
@@ -391,36 +343,68 @@ const FulfillNeed = () => {
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {/* Business Name */}
+                    <div>
+                      <Label htmlFor="businessName" className="text-base">
+                        Business Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="businessName"
+                        name="businessName"
+                        value={formData.businessName}
+                        onChange={handleInputChange}
+                        placeholder="Your business name"
+                        className="mt-1"
+                        required
+                      />
+                    </div>
+
+                    {/* Country */}
+                    <div>
+                      <Label htmlFor="registerCountry" className="text-base">
+                        Country <span className="text-red-500">*</span>
+                      </Label>
+                      <Select
+                        value={formData.country}
+                        onValueChange={(value) => handleSelectChange("country", value)}
+                        required
+                      >
+                        <SelectTrigger id="registerCountry" className="mt-1">
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem key={country} value={country}>
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  {/* Country */}
+                  {/* Description */}
                   <div>
-                    <Label htmlFor="country" className="text-base">
-                      Country <span className="text-red-500">*</span>
+                    <Label htmlFor="description" className="text-base">
+                      Detailed Description <span className="text-red-500">*</span>
                     </Label>
-                    <Select
-                      value={formData.country}
-                      onValueChange={(value) => handleSelectChange("country", value)}
+                    <Textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      placeholder="Provide detailed information about what you're looking for, requirements, timeline, etc."
+                      className="mt-1 h-32"
                       required
-                    >
-                      <SelectTrigger id="country" className="mt-1">
-                        <SelectValue placeholder="Select country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country) => (
-                          <SelectItem key={country} value={country}>
-                            {country}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                   </div>
 
                   {/* Pitch Video Section */}
                   <div className="space-y-4">
                     <Label className="text-base">Pitch Video (Optional)</Label>
                     <p className="text-sm text-gray-500">
-                      Add a pitch video to showcase your business need. You can either provide a URL or upload a video file.
+                      Add a pitch video to better explain your need. You can either provide a URL or upload a video file.
                     </p>
                     
                     {/* Video URL Option */}
@@ -495,7 +479,7 @@ const FulfillNeed = () => {
                       required
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      This will not be displayed publicly. Messages from interested parties will be forwarded to this email.
+                      Responses from interested parties will be sent to this email.
                     </p>
                   </div>
 
@@ -504,16 +488,16 @@ const FulfillNeed = () => {
                     <Button
                       type="submit"
                       className="w-full bg-startupPurple-600 hover:bg-startupPurple-700"
-                      disabled={isSubmitting}
+                      disabled={isLoading}
                     >
-                      {isSubmitting ? "Submitting..." : "Register Your Need"}
+                      {isLoading ? "Posting..." : "Post Your Need"}
                     </Button>
                   </div>
                 </form>
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );

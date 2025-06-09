@@ -1,8 +1,8 @@
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Building } from "lucide-react";
+import { ExternalLink, MapPin, Users, Calendar, DollarSign } from "lucide-react";
 
 export interface Business {
   id: number;
@@ -13,8 +13,9 @@ export interface Business {
   revenue: string;
   teamSize: number;
   industry: string;
-  logoUrl?: string;
-  websiteUrl?: string;
+  businessType: string;
+  websiteUrl: string;
+  status: "pending" | "approved" | "rejected";
 }
 
 interface BusinessCardProps {
@@ -23,61 +24,51 @@ interface BusinessCardProps {
 
 const BusinessCard = ({ business }: BusinessCardProps) => {
   return (
-    <Card className="overflow-hidden card-hover h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden">
-              {business.logoUrl ? (
-                <img src={business.logoUrl} alt={business.name} className="w-full h-full object-cover" />
-              ) : (
-                <Building className="text-gray-400" size={24} />
-              )}
-            </div>
-            <div>
-              <CardTitle className="text-lg">{business.name}</CardTitle>
-              <CardDescription className="text-sm text-gray-500">
-                {business.country}
-              </CardDescription>
-            </div>
-          </div>
+    <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex justify-between items-start mb-2">
+          <CardTitle className="text-xl">{business.name}</CardTitle>
+          <Badge variant="secondary">{business.businessType}</Badge>
+        </div>
+        <div className="flex items-center text-sm text-gray-500 mb-2">
+          <MapPin className="w-4 h-4 mr-1" />
+          {business.country}
         </div>
       </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3">
-          {business.description}
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-xs mt-2">
-          <div className="bg-gray-50 p-2 rounded">
-            <span className="text-gray-500">Founded</span>
-            <p className="font-medium">{business.yearFounded}</p>
+      
+      <CardContent className="flex-grow flex flex-col">
+        <p className="text-gray-600 mb-4 flex-grow">{business.description}</p>
+        
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center text-sm">
+            <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+            <span>Founded: {business.yearFounded}</span>
           </div>
-          <div className="bg-gray-50 p-2 rounded">
-            <span className="text-gray-500">Revenue</span>
-            <p className="font-medium">{business.revenue}</p>
+          <div className="flex items-center text-sm">
+            <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
+            <span>Revenue: {business.revenue}</span>
           </div>
-          <div className="bg-gray-50 p-2 rounded">
-            <span className="text-gray-500">Team</span>
-            <p className="font-medium">{business.teamSize} people</p>
-          </div>
-          <div className="bg-gray-50 p-2 rounded">
-            <span className="text-gray-500">Industry</span>
-            <p className="font-medium">{business.industry}</p>
+          <div className="flex items-center text-sm">
+            <Users className="w-4 h-4 mr-2 text-gray-400" />
+            <span>Team: {business.teamSize} people</span>
           </div>
         </div>
-      </CardContent>
-      <CardFooter className="border-t pt-4 flex justify-between">
-        {business.websiteUrl && (
-          <Button variant="outline" size="sm" asChild>
-            <a href={business.websiteUrl} target="_blank" rel="noopener noreferrer">
-              Visit Website
-            </a>
+        
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1">
+            Learn More
           </Button>
-        )}
-        <Button size="sm" className="bg-startupBlue-600 hover:bg-startupBlue-700" asChild>
-          <Link to={`/business/${business.id}`}>View Details</Link>
-        </Button>
-      </CardFooter>
+          {business.websiteUrl && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.open(business.websiteUrl, '_blank')}
+            >
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+      </CardContent>
     </Card>
   );
 };

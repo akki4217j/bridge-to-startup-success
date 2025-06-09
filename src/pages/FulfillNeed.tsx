@@ -17,8 +17,20 @@ const FulfillNeed = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all-types");
   const [selectedCountry, setSelectedCountry] = useState("all-countries");
+  const [selectedBusinessType, setSelectedBusinessType] = useState("all-business-types");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
+
+  // Business types for filtering and form
+  const businessTypes = [
+    "Startup",
+    "Small Business", 
+    "Medium Enterprise",
+    "Large Corporation",
+    "Non-Profit",
+    "Freelancer",
+    "Agency"
+  ];
 
   // Form data for registering a need
   const [formData, setFormData] = useState({
@@ -26,6 +38,7 @@ const FulfillNeed = () => {
     type: "",
     description: "",
     businessName: "",
+    businessType: "",
     country: "",
     contactEmail: "",
     pitchVideoUrl: "",
@@ -38,8 +51,10 @@ const FulfillNeed = () => {
     
     const matchesType = selectedType === "all-types" || need.type === selectedType;
     const matchesCountry = selectedCountry === "all-countries" || need.country === selectedCountry;
+    const matchesBusinessType = selectedBusinessType === "all-business-types" || 
+                               (need as any).businessType === selectedBusinessType;
     
-    return matchesSearch && matchesType && matchesCountry;
+    return matchesSearch && matchesType && matchesCountry && matchesBusinessType;
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -88,6 +103,7 @@ const FulfillNeed = () => {
         type: "",
         description: "",
         businessName: "",
+        businessType: "",
         country: "",
         contactEmail: "",
         pitchVideoUrl: "",
@@ -121,7 +137,7 @@ const FulfillNeed = () => {
           <TabsContent value="browse">
             {/* Filters */}
             <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 {/* Search */}
                 <div className="relative">
                   <Label htmlFor="search" className="mb-2 block">Search</Label>
@@ -148,6 +164,24 @@ const FulfillNeed = () => {
                     <SelectContent>
                       <SelectItem value="all-types">All Types</SelectItem>
                       {needTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Business Type Filter */}
+                <div>
+                  <Label htmlFor="businessTypeFilter" className="mb-2 block">Business Type</Label>
+                  <Select value={selectedBusinessType} onValueChange={setSelectedBusinessType}>
+                    <SelectTrigger id="businessTypeFilter">
+                      <SelectValue placeholder="All Business Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all-business-types">All Business Types</SelectItem>
+                      {businessTypes.map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>
@@ -319,7 +353,7 @@ const FulfillNeed = () => {
                     />
                   </div>
 
-                  {/* Business Name and Country */}
+                  {/* Business Name and Business Type */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="businessName" className="text-base">
@@ -337,26 +371,49 @@ const FulfillNeed = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="country" className="text-base">
-                        Country <span className="text-red-500">*</span>
+                      <Label htmlFor="businessType" className="text-base">
+                        Business Type <span className="text-red-500">*</span>
                       </Label>
                       <Select
-                        value={formData.country}
-                        onValueChange={(value) => handleSelectChange("country", value)}
+                        value={formData.businessType}
+                        onValueChange={(value) => handleSelectChange("businessType", value)}
                         required
                       >
-                        <SelectTrigger id="country" className="mt-1">
-                          <SelectValue placeholder="Select country" />
+                        <SelectTrigger id="businessType" className="mt-1">
+                          <SelectValue placeholder="Select business type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {countries.map((country) => (
-                            <SelectItem key={country} value={country}>
-                              {country}
+                          {businessTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  {/* Country */}
+                  <div>
+                    <Label htmlFor="country" className="text-base">
+                      Country <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      value={formData.country}
+                      onValueChange={(value) => handleSelectChange("country", value)}
+                      required
+                    >
+                      <SelectTrigger id="country" className="mt-1">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((country) => (
+                          <SelectItem key={country} value={country}>
+                            {country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Pitch Video Section */}

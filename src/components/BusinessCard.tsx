@@ -16,6 +16,7 @@ export interface Business {
   businessType: string;
   websiteUrl: string;
   status: "pending" | "approved" | "rejected";
+  logoUrl?: string;
 }
 
 interface BusinessCardProps {

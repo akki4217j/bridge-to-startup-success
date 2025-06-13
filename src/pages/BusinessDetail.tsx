@@ -2,13 +2,15 @@
 import { useParams, Link } from "react-router-dom";
 import { businesses } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
-import { Building, Globe, ArrowLeft } from "lucide-react";
+import { Building, Globe, ArrowLeft, Send } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useState } from "react";
 
 const BusinessDetail = () => {
   const { id } = useParams();
+  const [showContactForm, setShowContactForm] = useState(false);
   
   // Find the business by ID
   const business = businesses.find((b) => b.id === Number(id));
@@ -201,12 +203,38 @@ const BusinessDetail = () => {
                 </div>
               </TabsContent>
             </Tabs>
+
+            {/* Send Message Section */}
+            <div className="mt-8 bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">Interested in this business?</h2>
+                <Button 
+                  onClick={() => setShowContactForm(!showContactForm)}
+                  className="bg-startupBlue-600 hover:bg-startupBlue-700"
+                >
+                  <Send className="mr-2" size={16} />
+                  Send Message
+                </Button>
+              </div>
+              
+              {showContactForm && (
+                <div className="mt-4 pt-4 border-t">
+                  <ContactForm recipientName={business.name} />
+                </div>
+              )}
+              
+              {!showContactForm && (
+                <p className="text-gray-600">
+                  Get in touch with the business owner to learn more about this opportunity or discuss potential acquisition.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Right Column - Contact Form */}
           <div>
             <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
-              <h2 className="text-xl font-bold mb-4">Contact Business Owner</h2>
+              <h2 className="text-xl font-bold mb-4">Quick Contact</h2>
               <ContactForm recipientName={business.name} />
             </div>
           </div>

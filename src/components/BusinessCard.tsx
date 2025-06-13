@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, MapPin, Users, Calendar, DollarSign } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export interface Business {
   id: number;
@@ -24,6 +25,12 @@ interface BusinessCardProps {
 }
 
 const BusinessCard = ({ business }: BusinessCardProps) => {
+  const navigate = useNavigate();
+
+  const handleDetailClick = () => {
+    navigate(`/business/${business.id}`);
+  };
+
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
       <CardHeader>
@@ -56,8 +63,13 @@ const BusinessCard = ({ business }: BusinessCardProps) => {
         </div>
         
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            Learn More
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={handleDetailClick}
+          >
+            Detail
           </Button>
           {business.websiteUrl && (
             <Button

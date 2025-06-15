@@ -6,12 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { useBusinessContext } from "@/contexts/BusinessContext";
 import { industries, countries } from "@/data/mockData";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
 
 const Register = () => {
   const { toast } = useToast();
+  const { addBusiness } = useBusinessContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -38,11 +40,28 @@ const Register = () => {
 
     // Simulate form submission
     setTimeout(() => {
+      // Add business to the store
+      addBusiness({
+        name: formData.name,
+        industry: formData.industry,
+        country: formData.country,
+        description: formData.description,
+        websiteUrl: formData.websiteUrl,
+        contactEmail: formData.contactEmail,
+        businessType: 'Startup',
+        revenue: 'Not disclosed',
+        teamSize: 'Not disclosed',
+        price: 'Contact for pricing',
+        yearEstablished: new Date().getFullYear(),
+        highlights: [],
+      });
+
       setIsLoading(false);
       toast({
         title: "Registration Successful",
-        description: "Your business has been registered on StartupBridge.",
+        description: "Your business has been registered and is pending admin approval.",
       });
+      
       // Reset form
       setFormData({
         name: "",

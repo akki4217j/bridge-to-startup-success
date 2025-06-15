@@ -1,6 +1,7 @@
 
 import { useState } from "react";
-import { businesses, countries, businessTypes } from "@/data/mockData";
+import { countries, businessTypes } from "@/data/mockData";
+import { useBusinessContext } from "@/contexts/BusinessContext";
 import BusinessCard from "@/components/BusinessCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search } from "lucide-react";
 
 const Buy = () => {
+  const { businesses } = useBusinessContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBusinessType, setSelectedBusinessType] = useState("all-types");
   const [selectedCountry, setSelectedCountry] = useState("all-countries");
@@ -107,7 +109,7 @@ const Buy = () => {
 
           {filteredBusinesses.length === 0 && (
             <div className="text-center py-12">
-              <h3 className="text-xl font-medium mb-2">No businesses match your search</h3>
+              <h3 className="text-xl font-medium mb-2">No approved businesses match your search</h3>
               <p className="text-gray-500">Try adjusting your search criteria or filters</p>
             </div>
           )}

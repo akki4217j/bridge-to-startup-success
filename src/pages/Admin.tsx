@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
+import { useBusinessContext } from "@/contexts/BusinessContext";
 import { 
   Users, 
   CheckCircle, 
@@ -21,8 +22,6 @@ import {
   Shield,
   LogOut
 } from "lucide-react";
-import { businesses } from "@/data/mockData";
-import { Business } from "@/components/BusinessCard";
 
 interface AdminStats {
   total: number;
@@ -40,9 +39,9 @@ interface AdminActivity {
 }
 
 const Admin = () => {
+  const { businesses, updateBusinessStatus, deleteBusiness } = useBusinessContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
-  const [businessList, setBusinessList] = useState<Business[]>(businesses);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [adminActivities, setAdminActivities] = useState<AdminActivity[]>([
@@ -99,14 +98,8 @@ const Admin = () => {
   };
 
   const approveBusiness = (businessId: number) => {
-    setBusinessList(prev => 
-      prev.map(business => 
-        business.id === businessId 
-          ? { ...business, status: 'approved' as const }
-          : business
-      )
-    );
-    const business = businessList.find(b => b.id === businessId);
+    updateBusinessStatus(businessId, 'approved');
+    const business = businesses.find(b => b.id === businessId);
     if (business) {
       addActivity('Approved', business.name);
       toast({
@@ -117,14 +110,8 @@ const Admin = () => {
   };
 
   const rejectBusiness = (businessId: number) => {
-    setBusinessList(prev => 
-      prev.map(business => 
-        business.id === businessId 
-          ? { ...business, status: 'rejected' as const }
-          : business
-      )
-    );
-    const business = businessList.find(b => b.id === businessId);
+    updateBusinessStatus(businessId, 'rejected');
+    const business = businesses.find(b => b.id === businessId);
     if (business) {
       addActivity('Rejected', business.name);
       toast({
@@ -135,9 +122,9 @@ const Admin = () => {
     }
   };
 
-  const deleteBusiness = (businessId: number) => {
-    const business = businessList.find(b => b.id === businessId);
-    setBusinessList(prev => prev.filter(business => business.id !== businessId));
+  const handleDeleteBusiness = (businessId: number) => {
+    const business = businesses.find(b => b.id === businessId);
+    deleteBusiness(businessId);
     if (business) {
       addActivity('Deleted', business.name);
       toast({
@@ -150,15 +137,15 @@ const Admin = () => {
 
   const getStats = (): AdminStats => {
     return {
-      total: businessList.length,
-      pending: businessList.filter(b => b.status === 'pending').length,
-      approved: businessList.filter(b => b.status === 'approved').length,
-      rejected: businessList.filter(b => b.status === 'rejected').length,
+      total: businesses.length,
+      pending: businesses.filter(b => b.status === 'pending').length,
+      approved: businesses.filter(b => b.status === 'approved').length,
+      rejected: businesses.filter(b => b.status === 'rejected').length,
     };
   };
 
   const getFilteredBusinesses = () => {
-    let filtered = businessList;
+    let filtered = businesses;
     
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(business => business.status === selectedStatus);
@@ -176,7 +163,7 @@ const Admin = () => {
   };
 
   const exportData = () => {
-    const dataStr = JSON.stringify(businessList, null, 2);
+    const dataStr = JSON.stringify(businesses, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
@@ -401,7 +388,7 @@ const Admin = () => {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => deleteBusiness(business.id)}
+                                onClick={() => handleDeleteBusiness(business.id)}
                                 className="text-red-600 hover:text-red-700"
                               >
                                 <Trash2 className="h-4 w-4" />

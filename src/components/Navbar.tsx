@@ -31,6 +31,7 @@ const Navbar = () => {
             <Link to="/fulfill-need" className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Fulfill a Need</Link>
             <Link to="/register" className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Register</Link>
             <Link to="/store" className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Store</Link>
+            <Link to="/admin" className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Admin</Link>
           </div>
 
           {/* CTA Button */}
@@ -63,6 +64,7 @@ const Navbar = () => {
               <Link to="/fulfill-need" onClick={toggleNavbar} className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Fulfill a Need</Link>
               <Link to="/register" onClick={toggleNavbar} className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Register</Link>
               <Link to="/store" onClick={toggleNavbar} className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Store</Link>
+              <Link to="/admin" onClick={toggleNavbar} className="px-3 py-2 text-gray-700 hover:text-startupBlue-600 transition-colors duration-300">Admin</Link>
               <Link to="/register" onClick={toggleNavbar}>
                 <Button className="w-full bg-gradient-to-r from-startupBlue-500 to-startupPurple-500 text-white">
                   Get Started

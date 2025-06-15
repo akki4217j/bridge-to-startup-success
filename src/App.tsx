@@ -12,6 +12,7 @@ import Sell from "./pages/Sell";
 import FulfillNeed from "./pages/FulfillNeed";
 import Register from "./pages/Register";
 import Store from "./pages/Store";
+import Admin from "./pages/Admin";
 import BusinessDetail from "./pages/BusinessDetail";
 import NotFound from "./pages/NotFound";
 

@@ -35,6 +35,7 @@ const App = () => {
                 <Route path="/fulfill-need" element={<FulfillNeed />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/store" element={<Store />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/business/:id" element={<BusinessDetail />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

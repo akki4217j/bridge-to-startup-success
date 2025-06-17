@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { useBusinessContext } from "@/contexts/BusinessContext";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
@@ -21,7 +22,11 @@ import {
   BarChart3,
   LogOut,
   Mail,
-  Settings
+  Settings,
+  Calendar,
+  Globe,
+  DollarSign,
+  Building
 } from "lucide-react";
 
 interface AdminStats {
@@ -44,6 +49,7 @@ const AdminDashboard = () => {
   const { currentAdmin, logout } = useAdminAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
   const [adminActivities, setAdminActivities] = useState<AdminActivity[]>([
     {
       id: 1,
@@ -322,13 +328,138 @@ const AdminDashboard = () => {
                                   </Button>
                                 </>
                               )}
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => window.open(`/business/${business.id}`, '_blank')}
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
+                              
+                              {/* Details Button */}
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setSelectedBusiness(business)}
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                  <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                      <Building className="h-5 w-5" />
+                                      {business.name}
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      Business details and information
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  
+                                  <div className="space-y-6">
+                                    {/* Status Badge */}
+                                    <div className="flex justify-between items-center">
+                                      <Badge
+                                        variant={
+                                          business.status === 'approved' 
+                                            ? 'default' 
+                                            : business.status === 'rejected' 
+                                            ? 'destructive' 
+                                            : 'secondary'
+                                        }
+                                        className="text-sm"
+                                      >
+                                        {business.status}
+                                      </Badge>
+                                      <span className="text-sm text-gray-500">ID: {business.id}</span>
+                                    </div>
+
+                                    {/* Business Description */}
+                                    <div>
+                                      <h4 className="font-semibold mb-2">Description</h4>
+                                      <p className="text-gray-700">{business.description}</p>
+                                    </div>
+
+                                    {/* Business Details Grid */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div className="space-y-3">
+                                        <div className="flex items-center gap-2">
+                                          <Building className="h-4 w-4 text-gray-500" />
+                                          <div>
+                                            <p className="text-sm text-gray-500">Business Type</p>
+                                            <p className="font-medium">{business.businessType}</p>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2">
+                                          <Globe className="h-4 w-4 text-gray-500" />
+                                          <div>
+                                            <p className="text-sm text-gray-500">Country</p>
+                                            <p className="font-medium">{business.country}</p>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2">
+                                          <Calendar className="h-4 w-4 text-gray-500" />
+                                          <div>
+                                            <p className="text-sm text-gray-500">Year Established</p>
+                                            <p className="font-medium">{business.yearEstablished}</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="space-y-3">
+                                        <div className="flex items-center gap-2">
+                                          <DollarSign className="h-4 w-4 text-gray-500" />
+                                          <div>
+                                            <p className="text-sm text-gray-500">Revenue</p>
+                                            <p className="font-medium">{business.revenue}</p>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2">
+                                          <Users className="h-4 w-4 text-gray-500" />
+                                          <div>
+                                            <p className="text-sm text-gray-500">Team Size</p>
+                                            <p className="font-medium">{business.teamSize}</p>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2">
+                                          <BarChart3 className="h-4 w-4 text-gray-500" />
+                                          <div>
+                                            <p className="text-sm text-gray-500">Industry</p>
+                                            <p className="font-medium">{business.industry}</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Action Buttons for Pending Businesses */}
+                                    {business.status === 'pending' && (
+                                      <div className="flex gap-2 pt-4 border-t">
+                                        <Button
+                                          onClick={() => {
+                                            approveBusiness(business.id);
+                                            setSelectedBusiness(null);
+                                          }}
+                                          className="flex-1 bg-green-600 hover:bg-green-700"
+                                        >
+                                          <CheckCircle className="mr-2 h-4 w-4" />
+                                          Approve Business
+                                        </Button>
+                                        <Button
+                                          variant="destructive"
+                                          onClick={() => {
+                                            rejectBusiness(business.id);
+                                            setSelectedBusiness(null);
+                                          }}
+                                          className="flex-1"
+                                        >
+                                          <XCircle className="mr-2 h-4 w-4" />
+                                          Reject Business
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                              
                               <Button
                                 size="sm"
                                 variant="outline"

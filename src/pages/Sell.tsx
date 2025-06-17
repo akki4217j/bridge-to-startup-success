@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useBusinessContext } from "@/contexts/BusinessContext";
 import { industries, countries, businessTypes } from "@/data/mockData";
 import { Upload, Video } from "lucide-react";
 
 const Sell = () => {
   const { toast } = useToast();
+  const { addBusiness } = useBusinessContext();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
   
@@ -63,11 +65,28 @@ const Sell = () => {
 
     // Simulate form submission
     setTimeout(() => {
+      // Create business object for submission
+      const businessData = {
+        name: formData.name,
+        description: formData.description,
+        industry: formData.industry,
+        country: formData.country,
+        businessType: formData.businessType,
+        revenue: formData.revenue,
+        teamSize: formData.teamSize,
+        yearEstablished: parseInt(formData.yearFounded),
+        highlights: [],
+        images: []
+      };
+
+      addBusiness(businessData);
+      
       setIsLoading(false);
       toast({
         title: "Listing Submitted for Review",
         description: "Your business has been submitted and is pending admin approval. You'll be notified once it's approved and live on the marketplace.",
       });
+      
       // Reset form
       setFormData({
         name: "",

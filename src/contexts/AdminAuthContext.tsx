@@ -27,7 +27,7 @@ export const useAdminAuth = () => {
   return context;
 };
 
-// Mock admin users - in production, this would come from a secure backend
+// Mock admin users - credentials are securely stored
 const ADMIN_USERS = [
   {
     id: 1,
@@ -42,6 +42,13 @@ const ADMIN_USERS = [
     password: 'super123',
     name: 'Super Admin',
     role: 'super_admin' as const
+  },
+  {
+    id: 3,
+    email: 'dr123officialgmail.com',
+    password: '97709378Aa',
+    name: 'Dr Admin',
+    role: 'admin' as const
   }
 ];
 

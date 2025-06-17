@@ -32,9 +32,8 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
       businessType: businessData.businessType || 'Startup',
       revenue: businessData.revenue || 'Not disclosed',
       teamSize: businessData.teamSize || 'Not disclosed',
-      price: typeof businessData.price === 'string' ? businessData.price : 'Contact for pricing',
-      yearEstablished: typeof businessData.yearEstablished === 'number' ? businessData.yearEstablished : new Date().getFullYear(),
-      highlights: Array.isArray(businessData.highlights) ? businessData.highlights : [],
+      yearEstablished: businessData.yearEstablished || new Date().getFullYear(),
+      highlights: businessData.highlights || [],
     };
     
     setBusinesses(prev => [newBusiness, ...prev]);

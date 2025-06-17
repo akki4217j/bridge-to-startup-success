@@ -31,10 +31,11 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
       // Ensure all required fields have proper types
       businessType: businessData.businessType || 'Startup',
       revenue: businessData.revenue || 'Not disclosed',
-      teamSize: businessData.teamSize || 'Not disclosed',
-      yearFounded: businessData.yearFounded || new Date().getFullYear(),
+      teamSize: typeof businessData.teamSize === 'string' ? parseInt(businessData.teamSize) || 0 : businessData.teamSize,
+      yearFounded: typeof businessData.yearFounded === 'string' ? parseInt(businessData.yearFounded) || new Date().getFullYear() : businessData.yearFounded,
       highlights: businessData.highlights || [],
       websiteUrl: businessData.websiteUrl || '',
+      images: businessData.images || [],
     };
     
     setBusinesses(prev => [newBusiness, ...prev]);

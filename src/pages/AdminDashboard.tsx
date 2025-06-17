@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,7 +26,10 @@ import {
   Calendar,
   Globe,
   DollarSign,
-  Building
+  Building,
+  Phone,
+  MapPin,
+  Star
 } from "lucide-react";
 
 interface AdminStats {
@@ -339,99 +343,167 @@ const AdminDashboard = () => {
                                     <Eye className="h-4 w-4" />
                                   </Button>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                                   <DialogHeader>
                                     <DialogTitle className="flex items-center gap-2">
                                       <Building className="h-5 w-5" />
-                                      {business.name}
+                                      {business.name} - Complete Details
                                     </DialogTitle>
                                     <DialogDescription>
-                                      Business details and information
+                                      All information submitted by the user during registration
                                     </DialogDescription>
                                   </DialogHeader>
                                   
-                                  <div className="space-y-6">
-                                    {/* Status Badge */}
-                                    <div className="flex justify-between items-center">
-                                      <Badge
-                                        variant={
-                                          business.status === 'approved' 
-                                            ? 'default' 
-                                            : business.status === 'rejected' 
-                                            ? 'destructive' 
-                                            : 'secondary'
-                                        }
-                                        className="text-sm"
-                                      >
-                                        {business.status}
-                                      </Badge>
-                                      <span className="text-sm text-gray-500">ID: {business.id}</span>
+                                  <div className="space-y-8">
+                                    {/* Status and ID */}
+                                    <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                      <div className="flex items-center gap-3">
+                                        <Badge
+                                          variant={
+                                            business.status === 'approved' 
+                                              ? 'default' 
+                                              : business.status === 'rejected' 
+                                              ? 'destructive' 
+                                              : 'secondary'
+                                          }
+                                          className="text-sm px-3 py-1"
+                                        >
+                                          {business.status.toUpperCase()}
+                                        </Badge>
+                                        <span className="text-sm text-gray-600">Business ID: {business.id}</span>
+                                      </div>
                                     </div>
 
-                                    {/* Business Description */}
-                                    <div>
-                                      <h4 className="font-semibold mb-2">Description</h4>
-                                      <p className="text-gray-700">{business.description}</p>
+                                    {/* Business Overview */}
+                                    <div className="space-y-4">
+                                      <h3 className="text-lg font-semibold border-b pb-2">Business Overview</h3>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                          <label className="text-sm font-medium text-gray-500">Business Name</label>
+                                          <p className="text-lg font-medium">{business.name}</p>
+                                        </div>
+                                        <div>
+                                          <label className="text-sm font-medium text-gray-500">Industry</label>
+                                          <p className="text-lg">{business.industry}</p>
+                                        </div>
+                                      </div>
+                                      
+                                      <div>
+                                        <label className="text-sm font-medium text-gray-500">Business Description</label>
+                                        <p className="text-gray-700 mt-1 p-3 bg-gray-50 rounded">{business.description}</p>
+                                      </div>
                                     </div>
 
-                                    {/* Business Details Grid */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div className="space-y-3">
-                                        <div className="flex items-center gap-2">
-                                          <Building className="h-4 w-4 text-gray-500" />
+                                    {/* Contact Information */}
+                                    <div className="space-y-4">
+                                      <h3 className="text-lg font-semibold border-b pb-2">Contact Information</h3>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {business.contactEmail && (
+                                          <div className="flex items-center gap-3">
+                                            <Mail className="h-5 w-5 text-blue-500" />
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-500">Contact Email</label>
+                                              <p className="font-medium">{business.contactEmail}</p>
+                                            </div>
+                                          </div>
+                                        )}
+                                        
+                                        {business.websiteUrl && (
+                                          <div className="flex items-center gap-3">
+                                            <Globe className="h-5 w-5 text-green-500" />
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-500">Website</label>
+                                              <p className="font-medium text-blue-600 hover:underline">
+                                                <a href={business.websiteUrl} target="_blank" rel="noopener noreferrer">
+                                                  {business.websiteUrl}
+                                                </a>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Business Details */}
+                                    <div className="space-y-4">
+                                      <h3 className="text-lg font-semibold border-b pb-2">Business Details</h3>
+                                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="flex items-center gap-3">
+                                          <Building className="h-5 w-5 text-purple-500" />
                                           <div>
-                                            <p className="text-sm text-gray-500">Business Type</p>
+                                            <label className="text-sm font-medium text-gray-500">Business Type</label>
                                             <p className="font-medium">{business.businessType}</p>
                                           </div>
                                         </div>
                                         
-                                        <div className="flex items-center gap-2">
-                                          <Globe className="h-4 w-4 text-gray-500" />
+                                        <div className="flex items-center gap-3">
+                                          <MapPin className="h-5 w-5 text-red-500" />
                                           <div>
-                                            <p className="text-sm text-gray-500">Country</p>
+                                            <label className="text-sm font-medium text-gray-500">Country</label>
                                             <p className="font-medium">{business.country}</p>
                                           </div>
                                         </div>
                                         
-                                        <div className="flex items-center gap-2">
-                                          <Calendar className="h-4 w-4 text-gray-500" />
+                                        <div className="flex items-center gap-3">
+                                          <Calendar className="h-5 w-5 text-orange-500" />
                                           <div>
-                                            <p className="text-sm text-gray-500">Year Founded</p>
+                                            <label className="text-sm font-medium text-gray-500">Year Founded</label>
                                             <p className="font-medium">{business.yearFounded}</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      
-                                      <div className="space-y-3">
-                                        <div className="flex items-center gap-2">
-                                          <DollarSign className="h-4 w-4 text-gray-500" />
-                                          <div>
-                                            <p className="text-sm text-gray-500">Revenue</p>
-                                            <p className="font-medium">{business.revenue}</p>
-                                          </div>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-2">
-                                          <Users className="h-4 w-4 text-gray-500" />
-                                          <div>
-                                            <p className="text-sm text-gray-500">Team Size</p>
-                                            <p className="font-medium">{business.teamSize}</p>
-                                          </div>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-2">
-                                          <BarChart3 className="h-4 w-4 text-gray-500" />
-                                          <div>
-                                            <p className="text-sm text-gray-500">Industry</p>
-                                            <p className="font-medium">{business.industry}</p>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
 
+                                    {/* Financial & Team Information */}
+                                    <div className="space-y-4">
+                                      <h3 className="text-lg font-semibold border-b pb-2">Financial & Team Information</h3>
+                                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="flex items-center gap-3">
+                                          <DollarSign className="h-5 w-5 text-green-500" />
+                                          <div>
+                                            <label className="text-sm font-medium text-gray-500">Revenue</label>
+                                            <p className="font-medium">{business.revenue}</p>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-3">
+                                          <Users className="h-5 w-5 text-blue-500" />
+                                          <div>
+                                            <label className="text-sm font-medium text-gray-500">Team Size</label>
+                                            <p className="font-medium">{business.teamSize}</p>
+                                          </div>
+                                        </div>
+
+                                        {business.price && (
+                                          <div className="flex items-center gap-3">
+                                            <Star className="h-5 w-5 text-yellow-500" />
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-500">Asking Price</label>
+                                              <p className="font-medium">{business.price}</p>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Highlights */}
+                                    {business.highlights && business.highlights.length > 0 && (
+                                      <div className="space-y-4">
+                                        <h3 className="text-lg font-semibold border-b pb-2">Key Highlights</h3>
+                                        <div className="space-y-2">
+                                          {business.highlights.map((highlight, index) => (
+                                            <div key={index} className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span>{highlight}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
                                     {/* Action Buttons for Pending Businesses */}
                                     {business.status === 'pending' && (
-                                      <div className="flex gap-2 pt-4 border-t">
+                                      <div className="flex gap-3 pt-6 border-t">
                                         <Button
                                           onClick={() => {
                                             approveBusiness(business.id);

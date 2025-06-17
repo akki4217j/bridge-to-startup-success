@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,19 +9,27 @@ import { useBusinessContext } from "@/contexts/BusinessContext";
 import { industries, countries } from "@/data/mockData";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const { toast } = useToast();
   const { addBusiness } = useBusinessContext();
+  const navigate = useNavigate();
+  
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    industry: "",
-    country: "",
-    description: "",
-    websiteUrl: "",
-    contactEmail: "",
+    name: '',
+    description: '',
+    industry: '',
+    country: '',
+    businessType: '',
+    revenue: '',
+    teamSize: '',
+    price: '',
+    yearEstablished: new Date().getFullYear(),
+    highlights: [] as string[],
+    images: [] as string[],
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -36,42 +43,35 @@ const Register = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate form submission
-    setTimeout(() => {
-      // Add business to the store
-      addBusiness({
-        name: formData.name,
-        industry: formData.industry,
-        country: formData.country,
-        description: formData.description,
-        websiteUrl: formData.websiteUrl,
-        contactEmail: formData.contactEmail,
-        businessType: 'Startup',
-        revenue: 'Not disclosed',
-        teamSize: 'Not disclosed',
-        price: 'Contact for pricing',
-        yearEstablished: new Date().getFullYear(),
-        highlights: [],
-      });
-
-      setIsLoading(false);
+    
+    if (!formData.name || !formData.description || !formData.industry || !formData.country) {
       toast({
-        title: "Registration Successful",
-        description: "Your business has been registered and is pending admin approval.",
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      addBusiness({
+        ...formData,
+        yearEstablished: Number(formData.yearEstablished)
       });
       
-      // Reset form
-      setFormData({
-        name: "",
-        industry: "",
-        country: "",
-        description: "",
-        websiteUrl: "",
-        contactEmail: "",
+      toast({
+        title: "Registration Successful!",
+        description: "Your business has been submitted for review. You will be notified once it's approved.",
       });
-    }, 1500);
+      
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "There was an error submitting your business. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

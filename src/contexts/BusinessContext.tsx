@@ -28,13 +28,13 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
       ...businessData,
       id: Math.max(0, ...businesses.map(b => b.id)) + 1,
       status: 'pending',
-      // Default values for required fields not in registration form
+      // Ensure all required fields have proper types
       businessType: businessData.businessType || 'Startup',
       revenue: businessData.revenue || 'Not disclosed',
       teamSize: businessData.teamSize || 'Not disclosed',
-      price: businessData.price || 'Contact for pricing',
-      yearEstablished: businessData.yearEstablished || new Date().getFullYear(),
-      highlights: businessData.highlights || [],
+      price: typeof businessData.price === 'string' ? businessData.price : 'Contact for pricing',
+      yearEstablished: typeof businessData.yearEstablished === 'number' ? businessData.yearEstablished : new Date().getFullYear(),
+      highlights: Array.isArray(businessData.highlights) ? businessData.highlights : [],
     };
     
     setBusinesses(prev => [newBusiness, ...prev]);

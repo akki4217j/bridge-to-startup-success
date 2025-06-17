@@ -74,9 +74,11 @@ const Sell = () => {
         businessType: formData.businessType,
         revenue: formData.revenue,
         teamSize: formData.teamSize,
-        yearEstablished: parseInt(formData.yearFounded),
+        yearFounded: parseInt(formData.yearFounded),
         highlights: [],
-        images: []
+        images: [],
+        websiteUrl: formData.websiteUrl,
+        price: "Contact for pricing",
       };
 
       addBusiness(businessData);

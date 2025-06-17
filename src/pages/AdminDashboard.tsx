@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -397,8 +396,8 @@ const AdminDashboard = () => {
                                         <div className="flex items-center gap-2">
                                           <Calendar className="h-4 w-4 text-gray-500" />
                                           <div>
-                                            <p className="text-sm text-gray-500">Year Established</p>
-                                            <p className="font-medium">{business.yearEstablished}</p>
+                                            <p className="text-sm text-gray-500">Year Founded</p>
+                                            <p className="font-medium">{business.yearFounded}</p>
                                           </div>
                                         </div>
                                       </div>

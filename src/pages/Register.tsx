@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,9 +28,11 @@ const Register = () => {
     revenue: '',
     teamSize: '',
     price: '',
-    yearEstablished: new Date().getFullYear(),
+    yearFounded: new Date().getFullYear(),
     highlights: [] as string[],
     images: [] as string[],
+    websiteUrl: '',
+    contactEmail: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -56,7 +59,7 @@ const Register = () => {
     try {
       addBusiness({
         ...formData,
-        yearEstablished: Number(formData.yearEstablished)
+        yearFounded: Number(formData.yearFounded)
       });
       
       toast({
